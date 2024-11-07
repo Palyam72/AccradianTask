@@ -1,9 +1,6 @@
 import streamlit as st
 from pycaret.classification import load_model
 import pandas as pd
-from pandas_profiling import ProfileReport
-from streamlit_pandas_profiling import st_profile_report
-
 
 # Set up model dictionary
 model_list = ['lr', 'dt', 'rf', 'et',  'lightgbm', 'svm', 'nb']
@@ -20,14 +17,13 @@ def predict_transaction(model_name, input_data):
         return None
 
 st.title("Fraud Detection Model")
-    
+
 # Model selection dropdown
 selected_model_name = st.selectbox("Please select the model that you want to use", model_list)
 st.divider()
 
 st.header("Please Provide the Specific Information as Input")
 # Input fields for transaction features
-
 step = st.number_input("Step", min_value=0, format="%d")
 transaction_type = st.selectbox("Type", options=["CASH_OUT", "PAYMENT", "DEBIT", "TRANSFER", "CASH_IN"])
 amount = st.number_input("Amount", min_value=0.0, format="%.2f")
@@ -40,9 +36,10 @@ newbalance_dest = st.number_input("New Balance Dest", min_value=0.0, format="%.2
 
 st.divider()
 
-    # Prediction checkbox
+# Prediction checkbox
 predict_btn = st.checkbox("Predict")
-    # Prediction Logic
+
+# Prediction Logic
 if predict_btn:
     # Prepare input data as a dictionary
     input_data = {
@@ -57,7 +54,7 @@ if predict_btn:
         'newbalanceDest': newbalance_dest,
     }
 
-        # Predict using the selected model
+    # Predict using the selected model
     result = predict_transaction(selected_model_name, input_data)
     if result is not None:
         st.success(f"Prediction: {'Fraudulent' if result == 1 else 'Not Fraudulent'}")
