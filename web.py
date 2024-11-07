@@ -1,6 +1,5 @@
 import streamlit as st
 from pycaret.classification import load_model
-import pandas as pd
 
 # Set up model dictionary
 model_list = ['lr', 'dt', 'rf', 'et',  'lightgbm', 'svm', 'nb']
