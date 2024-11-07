@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from pycaret.classification import load_model, predict_model
+import joblib  # or import pickle
 
 # Set up model dictionary
 model_list = ['lr', 'dt', 'rf', 'et', 'lightgbm', 'svm', 'nb']
@@ -9,10 +9,17 @@ model_dict = {model_name: f"{model_name}.pkl" for model_name in model_list}
 # Function to predict transaction using a selected model
 def predict_transaction(model_name, input_data):
     if model_name in model_dict:
-        model = load_model(model_dict[model_name])  # Load the model from PyCaret
-        # Predict using the selected model
-        prediction = predict_model(model, data=pd.DataFrame([input_data]))
-        return prediction['Label'][0]  # The 'Label' column contains the prediction result
+        try:
+            # Load the model manually from the pickle file
+            model_path = model_dict[model_name]
+            model = joblib.load(model_path)  # or use pickle.load if saved with pickle
+            
+            # Predict using the selected model
+            prediction = model.predict(pd.DataFrame([input_data]))  # model expects a dataframe-like object
+            return prediction[0]  # Return the predicted label
+        except Exception as e:
+            st.error(f"Error loading or predicting with the model: {str(e)}")
+            return None
     else:
         st.error("Selected model not found.")
         return None
